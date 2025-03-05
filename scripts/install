@@ -109,6 +109,18 @@ ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 # Ensure we use PHP 8.0 as defined in _common.sh
 phpversion="8.0"
 ynh_app_setting_set --app=$app --key=phpversion --value=$phpversion
+
+# Create the PHP-FPM socket directory if it doesn't exist
+if [ ! -d "/var/run/php" ]; then
+    mkdir -p /var/run/php
+    chmod 755 /var/run/php
+fi
+if [ ! -d "/var/run/php/php8.0-fpm" ]; then
+    mkdir -p /var/run/php/php8.0-fpm
+    chmod 755 /var/run/php/php8.0-fpm
+fi
+
+# Add PHP-FPM configuration
 ynh_add_fpm_config --phpversion=$phpversion
 
 #=================================================
