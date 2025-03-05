@@ -86,12 +86,16 @@ wget -q -O /tmp/app.zip "$src_url"
 # Extract the source
 unzip -q /tmp/app.zip -d /tmp/
 # Get the extracted directory name
-src_dir=$(find /tmp -maxdepth 1 -type d -name "CVtheque_ynh-*" | head -n 1)
-# Copy only the application files (from sources/) to the final path
+src_dir=$(find /tmp -maxdepth 1 -type d -name "CVtheque-*" | head -n 1)
+# Copy the application files to the final path
+cp -r "$src_dir"/*.php "$final_path"
+cp -r "$src_dir"/*.css "$final_path"
+cp -r "$src_dir"/*.js "$final_path"
+cp -r "$src_dir"/LICENSE "$final_path"
 cp -r "$src_dir"/sources/* "$final_path"
-# Copy the tile-view files
-cp -r "$src_dir"/tile-view.css "$final_path"
-cp -r "$src_dir"/tile-view.js "$final_path"
+# Create uploads and temp directories if they don't exist
+mkdir -p "$final_path/uploads"
+mkdir -p "$final_path/temp"
 # Clean up
 rm -rf /tmp/app.zip "$src_dir"
 
