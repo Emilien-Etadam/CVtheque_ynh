@@ -146,6 +146,58 @@ chown -R $app:www-data "$final_path/uploads"
 chown -R $app:www-data "$final_path/temp"
 
 #=================================================
+# INITIALIZE DATABASE
+#=================================================
+ynh_script_progression --message="Initializing database..." --weight=1
+
+# Create the SQLite database and initialize the structure
+cat > "$final_path/init_db.php" << 'EOPHP'
+<?php
+// Initialize the SQLite database
+$dbPath = 'cv.db';
+try {
+    // Open or create the database
+    $db = new SQLite3($dbPath);
+    
+    // Check if the candidates table exists
+    $tableCheck = $db->query("SELECT name FROM sqlite_master WHERE type='table' AND name='candidates'");
+    if (!$tableCheck->fetchArray()) {
+        // Create the table candidates with all necessary columns
+        $db->exec("CREATE TABLE candidates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT,
+            position TEXT,
+            cv_path TEXT,
+            application_date TEXT,
+            comments TEXT,
+            status TEXT DEFAULT 'Nouveau',
+            skills TEXT,
+            experience TEXT,
+            education TEXT
+        )");
+    }
+} catch (Exception $e) {
+    die("Database error: " . $e->getMessage());
+}
+?>
+EOPHP
+
+# Execute the initialization script
+pushd "$final_path" || ynh_die
+php init_db.php
+popd || ynh_die
+
+# Set proper permissions for the database file
+if [ -f "$final_path/cv.db" ]; then
+    chown $app:www-data "$final_path/cv.db"
+    chmod 660 "$final_path/cv.db"
+fi
+
+# Remove the initialization script
+rm -f "$final_path/init_db.php"
+
+#=================================================
 # SETUP SSO AUTHENTICATION
 #=================================================
 ynh_script_progression --message="Configuring SSO authentication..." --weight=1
