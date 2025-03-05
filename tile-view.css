@@ -1,0 +1,422 @@
+/* Tile View Styles for CV Manager */
+.tile-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 8px;
+}
+
+.candidate-tile {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Styles pour l'aperçu PDF */
+.tile-pdf-preview {
+    position: relative;
+    width: auto;
+    height: auto;
+    background-color: transparent; /* Changé de white à transparent pour supprimer complètement le cadre */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin: 0 auto;
+    border: none; /* S'assurer qu'il n'y a pas de bordure */
+    box-shadow: none; /* S'assurer qu'il n'y a pas d'ombre */
+}
+
+/* S'assurer que le canvas du PDF n'a pas de bordure ou d'arrière-plan */
+.pdf-thumbnail {
+    display: block;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.pdf-thumbnail {
+    display: block;
+    /* Pas de width: 100% pour préserver les proportions originales */
+}
+
+.pdf-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.pdf-error {
+    color: #d32f2f;
+    font-size: 0.9rem;
+}
+
+.candidate-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tile-header {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.tile-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.tile-position {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.tile-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+}
+
+.status-Nouveau {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-En-cours {
+    background-color: #fff8e1;
+    color: #ff8f00;
+}
+
+.status-Entretien-planifié {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.status-Accepté {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.status-Refusé {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.tile-body {
+    padding: 12px;
+    flex-grow: 1;
+}
+
+/* Structure en rangées et colonnes pour le pied de tuile */
+.tile-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.tile-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styles pour les informations */
+.tile-info {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.tile-info span {
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* Positionnement du statut en bas à gauche de l'image */
+.tile-status-overlay {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    z-index: 10;
+}
+
+.tile-status-overlay .tile-status {
+    margin-bottom: 0;
+}
+
+/* Positionnement des icônes d'action en bas à droite de l'image */
+.tile-actions-overlay {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 4px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+/* S'assurer que les overlays sont positionnés relativement à l'aperçu PDF */
+.tile-pdf-preview {
+    position: relative;
+}
+
+[data-theme="dark"] .tile-actions-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Commentaires au survol */
+.tile-comments-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    font-size: 0.85rem;
+    max-height: 80%;
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 20;
+    pointer-events: none;
+}
+
+/* Positionnement des commentaires au survol par rapport à l'aperçu PDF */
+.tile-pdf-preview:hover .tile-comments-hover {
+    opacity: 1;
+}
+
+/* Email cliquable */
+.tile-email {
+    color: #1976d2;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.tile-email:hover {
+    color: #0d47a1;
+    text-decoration: underline;
+}
+
+.tile-date {
+    display: block;
+    color: #666;
+}
+
+[data-theme="dark"] .tile-email {
+    color: #64b5f6;
+}
+
+[data-theme="dark"] .tile-email:hover {
+    color: #90caf9;
+}
+
+[data-theme="dark"] .tile-date {
+    color: #b0b0b0;
+}
+
+.tile-comments {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 8px;
+    max-height: 80px;
+    overflow: hidden;
+    position: relative;
+}
+
+.tile-comments::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(transparent, white);
+}
+
+.tile-footer {
+    padding: 12px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tile-action {
+    color: #1976d2;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.tile-action:hover {
+    color: #0d47a1;
+}
+
+.tile-action.delete {
+    color: #d32f2f;
+}
+
+.tile-action.delete:hover {
+    color: #b71c1c;
+}
+
+/* View toggle styles */
+.view-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.view-toggle-label {
+    margin-right: 8px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.view-toggle-buttons {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.view-toggle-button {
+    padding: 6px 12px;
+    background-color: #f5f5f5;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-toggle-button.active {
+    background-color: #e0e0e0;
+    font-weight: 500;
+}
+
+.view-toggle-button:first-child {
+    border-right: 1px solid #ddd;
+}
+
+/* Theme compatibility */
+/* Light theme (default) */
+body {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.candidate-tile {
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tile-pdf-preview {
+    background-color: transparent;
+}
+
+/* Dark theme */
+[data-theme="dark"] body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .candidate-tile {
+    background-color: #2d2d2d;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .tile-pdf-preview {
+    background-color: transparent;
+}
+
+[data-theme="dark"] .pdf-loading {
+    color: #b0b0b0;
+}
+
+[data-theme="dark"] .tile-header,
+[data-theme="dark"] .tile-footer {
+    border-color: #3d3d3d;
+}
+
+[data-theme="dark"] .tile-name {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .tile-position,
+[data-theme="dark"] .tile-info,
+[data-theme="dark"] .tile-comments {
+    color: #b0b0b0;
+}
+
+[data-theme="dark"] .tile-comments::after {
+    background: linear-gradient(transparent, #2d2d2d);
+}
+
+[data-theme="dark"] .view-toggle-buttons {
+    border-color: #444;
+}
+
+[data-theme="dark"] .view-toggle-button {
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .view-toggle-button.active {
+    background-color: #444;
+}
+
+/* Status colors for dark mode */
+[data-theme="dark"] .status-Nouveau {
+    background-color: #0d47a1;
+    color: #e3f2fd;
+}
+
+[data-theme="dark"] .status-En-cours {
+    background-color: #e65100;
+    color: #fff8e1;
+}
+
+[data-theme="dark"] .status-Entretien-planifié {
+    background-color: #1b5e20;
+    color: #e8f5e9;
+}
+
+[data-theme="dark"] .status-Accepté {
+    background-color: #1b5e20;
+    color: #e8f5e9;
+}
+
+[data-theme="dark"] .status-Refusé {
+    background-color: #b71c1c;
+    color: #ffebee;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tile-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .tile-container {
+        grid-template-columns: 1fr;
+    }
+}

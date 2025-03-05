@@ -1,0 +1,65 @@
+{
+    "name": "CV Manager",
+    "id": "cv-manager",
+    "packaging_format": 1,
+    "description": {
+        "en": "Web application to manage CVs and job applications",
+        "fr": "Application web pour gérer les CV et les candidatures"
+    },
+    "version": "1.0.0~ynh1",
+    "url": "https://github.com/YunoHost-Apps/cv-manager_ynh",
+    "license": "GPL-3.0-only",
+    "maintainer": {
+        "name": "YunoHost Contributors",
+        "email": "apps@yunohost.org"
+    },
+    "requirements": {
+        "yunohost": ">= 4.3.0"
+    },
+    "multi_instance": true,
+    "services": [
+        "nginx",
+        "php8.0-fpm"
+    ],
+    "arguments": {
+        "install": [
+            {
+                "name": "domain",
+                "type": "domain",
+                "ask": {
+                    "en": "Choose a domain for CV Manager",
+                    "fr": "Choisissez un domaine pour CV Manager"
+                },
+                "example": "domain.org"
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "ask": {
+                    "en": "Choose a path for CV Manager",
+                    "fr": "Choisissez un chemin pour CV Manager"
+                },
+                "example": "/cv-manager",
+                "default": "/cv-manager"
+            },
+            {
+                "name": "admin",
+                "type": "user",
+                "ask": {
+                    "en": "Choose the administrator of this application",
+                    "fr": "Choisissez l'administrateur de cette application"
+                },
+                "example": "johndoe"
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "ask": {
+                    "en": "Should this application be accessible to the public?",
+                    "fr": "Cette application doit-elle être accessible au public ?"
+                },
+                "default": false
+            }
+        ]
+    }
+}

@@ -1,0 +1,174 @@
+#!/bin/bash
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+ynh_clean_setup () {
+	true
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+is_public=$YNH_APP_ARG_IS_PUBLIC
+
+app=$YNH_APP_INSTANCE_NAME
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
+
+final_path=/var/www/$app
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
+
+# Register (book) web path
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=1
+
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Installing dependencies..." --weight=5
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --weight=1
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --weight=3
+
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..." --weight=1
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
+
+# Create a dedicated PHP-FPM config
+ynh_add_fpm_config
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# CREATE DIRECTORIES
+#=================================================
+ynh_script_progression --message="Creating necessary directories..." --weight=1
+
+# Create uploads and temp directories
+mkdir -p "$final_path/uploads"
+mkdir -p "$final_path/temp"
+
+# Set permissions
+chmod 750 "$final_path"
+chmod 750 "$final_path/uploads"
+chmod 750 "$final_path/temp"
+chown -R $app:www-data "$final_path"
+chown -R $app:www-data "$final_path/uploads"
+chown -R $app:www-data "$final_path/temp"
+
+#=================================================
+# SETUP SSO AUTHENTICATION
+#=================================================
+ynh_script_progression --message="Configuring SSO authentication..." --weight=1
+
+# Create the SSO authentication file
+cat > "$final_path/sso_auth.php" << 'EOF'
+<?php
+// Vérifier si l'utilisateur est authentifié via le SSO de YunoHost
+if (!isset($_SERVER['REMOTE_USER']) && !isset($_SERVER['PHP_AUTH_USER'])) {
+    // L'utilisateur n'est pas authentifié, rediriger vers la page de connexion
+    header('Location: /yunohost/sso/');
+    exit;
+}
+// L'utilisateur est authentifié, on peut continuer
+$user = isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : $_SERVER['PHP_AUTH_USER'];
+?>
+EOF
+
+# Modify index.php to include SSO authentication if the app is not public
+if [ $is_public -eq 0 ]; then
+    # Add SSO authentication at the beginning of each PHP file
+    for file in "$final_path"/*.php; do
+        if [ -f "$file" ] && [ "$(basename "$file")" != "sso_auth.php" ]; then
+            # Check if the file already includes the SSO authentication
+            if ! grep -q "require_once 'sso_auth.php';" "$file"; then
+                # Add the include after the first PHP opening tag
+                sed -i '1s/<?php/<?php\nrequire_once "sso_auth.php";/' "$file"
+            fi
+        fi
+    done
+fi
+
+#=================================================
+# SETUP APPLICATION WITH CURL
+#=================================================
+ynh_script_progression --message="Finalizing installation..." --weight=1
+
+# Set app as public or private
+if [ $is_public -eq 1 ]; then
+    # Make app public
+    ynh_permission_update --permission="main" --add="visitors"
+else
+    # Remove visitors group
+    ynh_permission_update --permission="main" --remove="visitors"
+    # Add the admin user to allowed users
+    ynh_permission_update --permission="main" --add="$admin"
+fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of $app completed" --last

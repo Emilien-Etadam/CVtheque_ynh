@@ -1,0 +1,12 @@
+# Fichiers de base de données
+*.db
+*.sqlite
+*.sqlite3
+
+# Répertoires d'uploads et temporaires
+/uploads/*
+/temp/*
+
+# Fichiers système
+.DS_Store
+Thumbs.db

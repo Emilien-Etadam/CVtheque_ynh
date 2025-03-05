@@ -1,0 +1,124 @@
+:root {
+    /* Light theme variables */
+    --primary: #2196F3;
+    --primary-hover: #1976D2;
+    --background: #f5f5f5;
+    --container: white;
+    --text: #333;
+    --border: #ccc;
+    --shadow: 0 2px 4px rgba(0,0,0,0.1);
+    --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+    --background: #1a1a1a;
+    --container: #2d2d2d;
+    --text: #f5f5f5;
+    --border: #404040;
+    --shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Ajustement pour les statuts en mode sombre */
+[data-theme="dark"] select.bg-red-100 {
+    background-color: #662222 !important;
+    color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] select.bg-green-100 {
+    background-color: #225522 !important;
+    color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] select.bg-yellow-100 {
+    background-color: #665522 !important;
+    color: #f5f5f5 !important;
+}
+
+/* Style du titre de la page */
+h1.text-3xl {
+    color: var(--text);
+    transition: color var(--transition);
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.bg-white {
+    background-color: var(--container);
+    transition: background-color var(--transition);
+}
+
+.bg-gray-50, .bg-gray-100 {
+    background-color: var(--background);
+    transition: background-color var(--transition);
+}
+
+.text-gray-500, .text-gray-600, .text-gray-700 {
+    color: var(--text);
+    opacity: 0.7;
+    transition: color var(--transition);
+}
+
+.border, .border-t, .border-gray-300 {
+    border-color: var(--border) !important;
+    transition: border-color var(--transition);
+}
+
+.shadow-md {
+    box-shadow: var(--shadow);
+    transition: box-shadow var(--transition);
+}
+
+input, select, textarea {
+    background-color: var(--container);
+    color: var(--text);
+    border-color: var(--border);
+    transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+}
+
+/* PDF viewer adjustments for dark mode */
+[data-theme="dark"] .pdf-container {
+    background-color: #333;
+}
+
+/* Theme toggle button */
+#themeToggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--text);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color var(--transition);
+}
+
+#themeToggle:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+#themeToggle svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text);
+    fill: none;
+    stroke-width: 2;
+    transition: stroke var(--transition);
+}
+
+@media (max-width: 768px) {
+    #themeToggle {
+        top: 10px;
+        right: 10px;
+    }
+}
