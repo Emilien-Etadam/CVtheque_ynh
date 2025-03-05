@@ -1,5 +1,5 @@
 SOURCE_URL=https://github.com/Emilien-Etadam/CVtheque_ynh/archive/refs/heads/master.zip
-SOURCE_SUM=
+SOURCE_SUM=ed90166a24977749cfa993165e613d11ea26740779b0997c241971c4622831db
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
