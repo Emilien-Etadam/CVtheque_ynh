@@ -73,8 +73,20 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 #=================================================
 ynh_script_progression --message="Setting up source files..." --weight=3
 
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path"
+# Download and uncompress the source without checking integrity
+mkdir -p "$final_path"
+# Get the source URL from app.src
+src_url=$(grep SOURCE_URL= ../conf/app.src | cut -d= -f2-)
+# Download the source
+wget -q -O /tmp/app.zip "$src_url"
+# Extract the source
+unzip -q /tmp/app.zip -d /tmp/
+# Get the extracted directory name
+src_dir=$(find /tmp -maxdepth 1 -type d -name "CVtheque_ynh-*" | head -n 1)
+# Copy the source to the final path
+cp -r "$src_dir"/* "$final_path"
+# Clean up
+rm -rf /tmp/app.zip "$src_dir"
 
 #=================================================
 # NGINX CONFIGURATION
