@@ -36,7 +36,11 @@ app=$YNH_APP_INSTANCE_NAME
 ynh_script_progression --message="Validating installation parameters..." --weight=1
 
 final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
+# If the path already exists, remove it
+if [ -e "$final_path" ]; then
+    ynh_script_progression --message="Removing existing directory..." --weight=1
+    ynh_secure_remove --file="$final_path"
+fi
 
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
