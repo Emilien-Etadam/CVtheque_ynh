@@ -1,4 +1,4 @@
-SOURCE_URL=https://github.com/YunoHost-Apps/cv-manager_ynh/archive/refs/heads/master.zip
+SOURCE_URL=https://github.com/Emilien-Etadam/CVtheque_ynh/archive/refs/heads/master.zip
 SOURCE_SUM=
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
